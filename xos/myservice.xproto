@@ -1,0 +1,13 @@
+option app_label = "myservice";
+option name = "myservice";
+
+message myService (Service){
+    option verbose_name = "my Service";
+    required string service_message = 1 [help_text = "A Message to Display", max_length = 254, null = False, db_index = False, blank = False];
+}
+
+message myServiceInstance (TenantWithContainer){
+     option verbose_name = "my Service Instance";
+     option name = "myserviceinstance";
+     required string tenant_message = 1 [help_text = "Tenant Message to Display", max_length = 254, null = False, db_index = False, blank = False];
+}

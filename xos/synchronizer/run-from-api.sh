@@ -14,4 +14,4 @@
 # limitations under the License.
 
 
-python exampleservice-synchronizer.py
+python myservice-synchronizer.py

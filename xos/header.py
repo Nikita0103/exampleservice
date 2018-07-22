@@ -14,7 +14,7 @@
 # limitations under the License.
 
 
-# models.py -  ExampleService Models
+# models.py -  myService Models
 
 from core.models import Service, TenantWithContainer, XOSBase
 from django.db.models import *

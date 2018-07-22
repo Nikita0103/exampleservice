@@ -1,4 +1,3 @@
-
 # Copyright 2017-present Open Networking Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,22 +13,9 @@
 # limitations under the License.
 
 
-tosca_definitions_version: tosca_simple_yaml_1_0
+from synchronizers.new_base.modelaccessor import *
+from synchronizers.new_base.model_policies.model_policy_tenantwithcontainer import TenantWithContainerPolicy
 
-description: Onboard the exampleservice
-
-imports:
-   - custom_types/xos.yaml
-
-topology_template:
-  node_templates:
-    exampleservice:
-      type: tosca.nodes.ServiceController
-      properties:
-          base_url: file:///opt/xos_services/exampleservice/xos/
-          # The following will concatenate with base_url automatically, if
-          # base_url is non-null.
-          xproto: ./
-          private_key: file:///opt/xos/key_import/exampleservice_rsa
-          public_key: file:///opt/xos/key_import/exampleservice_rsa.pub
-
+class myServiceInstancePolicy(TenantWithContainerPolicy):
+    model_name = "myServiceInstance"
+~                                       

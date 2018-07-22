@@ -25,41 +25,45 @@ sys.path.insert(0, parentdir)
 
 logger = Logger(level=logging.INFO)
 
-class SyncExampleServiceInstance(SyncInstanceUsingAnsible):
+class SyncmyServiceInstance(SyncInstanceUsingAnsible):
 
-    provides = [ExampleServiceInstance]
+    # Used by XOSObserver : sync_steps to determine dependencies.
+    provides = [myServiceInstance]
 
-    observes = ExampleServiceInstance
+    # The Tenant that is synchronized.
+    observes = myServiceInstance
 
     requested_interval = 0
 
-    template_name = "exampleserviceinstance_playbook.yaml"
+    # Name of the ansible playbook to run.
+    template_name = "myserviceinstance_playbook.yaml"
 
-    service_key_name = "/opt/xos/synchronizers/exampleservice/exampleservice_private_key"
+    # Path to the SSH key used by Ansible.
+    service_key_name = "/opt/xos/synchronizers/myservice/myservice_private_key"
 
     watches = [ModelLink(ServiceDependency,via='servicedependency'), ModelLink(ServiceMonitoringAgentInfo,via='monitoringagentinfo')]
 
     def __init__(self, *args, **kwargs):
-        super(SyncExampleServiceInstance, self).__init__(*args, **kwargs)
+        super(SyncmyServiceInstance, self).__init__(*args, **kwargs)
 
-    def get_exampleservice(self, o):
+    def get_myservice(self, o):
         if not o.owner:
             return None
 
-        exampleservice = ExampleService.objects.filter(id=o.owner.id)
+        myservice = myService.objects.filter(id=o.owner.id)
 
-        if not exampleservice:
+        if not myservice:
             return None
 
-        return exampleservice[0]
+        return myservice[0]
 
     # Gets the attributes that are used by the Ansible template but are not
     # part of the set of default attributes.
     def get_extra_attributes(self, o):
         fields = {}
         fields['tenant_message'] = o.tenant_message
-        exampleservice = self.get_exampleservice(o)
-        fields['service_message'] = exampleservice.service_message
+        myservice = self.get_myservice(o)
+        fields['service_message'] = myservice.service_message
 
         if o.foreground_color:
             fields["foreground_color"] = o.foreground_color.html_code
@@ -89,7 +93,7 @@ class SyncExampleServiceInstance(SyncInstanceUsingAnsible):
             logger.info("handle watch notifications for service monitoring agent info...ignoring because target_uri attribute in monitoring agent info:%s is null" % (monitoring_agent_info))
             return
 
-        objs = ExampleServiceInstance.objects.all()
+        objs = myServiceInstance.objects.all()
         for obj in objs:
             if obj.owner.id != monitoring_agent_info.service.id:
                 logger.info("handle watch notifications for service monitoring agent info...ignoring because service attribute in monitoring agent info:%s is not matching" % (monitoring_agent_info))
@@ -108,5 +112,5 @@ class SyncExampleServiceInstance(SyncInstanceUsingAnsible):
             fields["target_uri"] = monitoring_agent_info.target_uri
 
             template_name = "monitoring_agent.yaml"
-            super(SyncExampleServiceInstance, self).run_playbook(obj, fields, template_name)
+            super(SyncmyServiceInstance, self).run_playbook(obj, fields, template_name)
         pass

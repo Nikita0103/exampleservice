@@ -1,7 +1,3 @@
-#! /bin/bash
-
-# Copyright 2017-present Open Networking Foundation
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -14,5 +10,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-PASSWORD=`cat /opt/credentials/xosadmin@opencord.org`
-curl -H "xos-username: xosadmin@opencord.org" -H "xos-password: $PASSWORD" -X POST --data-binary @exampleservice.yaml 127.0.0.1:9102/run
+
+#!/usr/bin/env python
+
+# Runs the standard XOS synchronizer
+
+import importlib
+import os
+import sys
+from xosconfig import Config
+
+config_file = os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + '/myservice_config.yaml')
+Config.init(config_file, 'synchronizer-config-schema.yaml')
+
+synchronizer_path = os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), "../../synchronizers/new_base")
+sys.path.append(synchronizer_path)
+mod = importlib.import_module("xos-synchronizer")
+mod.main()
+
+
